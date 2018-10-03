@@ -27,6 +27,56 @@ double Distance::convertToInches() const
     return total_inches;
 }
 
+
+const Distance Distance::operator+(const Distance &dist) const
+{
+    Distance sum;
+
+    sum.inches = inches + dist.inches;
+    sum.feet = feet + dist.feet;
+
+    sum.init();
+
+    return sum;
+}
+
+
+const Distance Distance::operator-(const Distance &dist) const
+{
+    Distance difference;
+
+
+
+    if (feet >= dist.feet)
+    {
+        difference.feet = feet - dist.feet;
+        if (inches >= dist.inches)
+            difference.inches = inches - dist.inches;
+        else if (inches < dist.inches)
+        {
+            difference.inches = 12 - (dist.inches - inches);
+            difference.feet -= 1;
+        }
+    }
+
+    else if (feet < dist.feet)
+    {
+        difference.feet = dist.feet - feet;
+        if (dist.inches >= inches)
+            difference.inches = dist.inches - inches;
+        else if (dist.inches < inches)
+        {
+            difference.inches = 12 - (inches - dist.inches);
+            difference.feet -= 1;
+        }
+    }
+
+
+    difference.init();
+
+    return difference;
+}
+
 void Distance::display() const
 {
     cout << feet << "' " << inches << "\"" << endl;
@@ -42,7 +92,7 @@ void Distance::init()
 
     if (inches >= 12)
     {
-        feet += inches/12;
+        feet += (inches/12);
         inches = fmod(inches, 12);
 
     }
