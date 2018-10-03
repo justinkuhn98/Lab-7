@@ -16,9 +16,12 @@ class Distance
         unsigned feet;   // IN/OUT -- feet of measurement
         double inches;   // IN/OUT -- inches of measurement
     public:
+        /***** CONSTRUCTORS *****/
         Distance();
         Distance(unsigned, double);
         Distance(double);
+        /************************/
+
         /***** ACCESSORS *****/
         double convertToInches() const;
         const Distance operator+(const Distance &) const;
@@ -51,7 +54,7 @@ class Distance
 
 
 /******************************************************************************
- * Distance(double inches);
+ * Distance(double inch);
  *   Constructor; Initialize class attributes ( feet = inches/12,
  *                              inches -= (static_cast<int>(inches)/ 12) * 12)
  *   Parameters: inches: inches to convert to feet and inches
@@ -77,7 +80,7 @@ class Distance
 * --------------------------------------------------------------
 *   Parameters: None
 * --------------------------------------------------------------
-*   Return: double total
+*   Return: double total_inches
 ***************************************************************/
 
 /****************************************************************
@@ -93,26 +96,26 @@ class Distance
 ***************************************************************/
 
 /****************************************************************
-* const Distance operator+(const Distance &second) const;
+* const Distance operator+(const Distance &dist) const;
 *
 *   Accessor; This method will define the addition operator for a
 *               Distance object.
 * --------------------------------------------------------------
-*   Parameters: second: right side of addition.
+*   Parameters: dist: right side of addition.
 * --------------------------------------------------------------
-*   Return: Distance temp (result of addition)
+*   Return: Distance sum (result of addition)
 ***************************************************************/
 
 
 /****************************************************************
-* const Distance operator-(const Distance &second) const;
+* const Distance operator-(const Distance &dist) const;
 *
 *   Accessor; This method will define the subtration operator for a
 *               Distance object.
 * --------------------------------------------------------------
-*   Parameters: second: right side of subtraction.
+*   Parameters: dist: right side of subtraction.
 * --------------------------------------------------------------
-*   Return: Distance temp (result of subtraction)
+*   Return: Distance difference (result of subtraction)
 ***************************************************************/
 
 /***** MUTATORS *****/

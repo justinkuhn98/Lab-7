@@ -1,13 +1,16 @@
 #include "distance.h"
 #include <iostream>
 #include <iomanip>
+#include <math.h>
 
 using namespace std;
+
+
 
 /***********************************************************
 *  Constructor (no argument) : Class Distance
 *_________________________________________________________
-*This constructor initializes feet = 0, inches = 0.0.
+*This constructor initializes feet = 0, inches = 0.
 *_________________________________________________________
 * PRE-CONDITIONS
 *   None
@@ -15,38 +18,18 @@ using namespace std;
 * POST-CONDITIONS
 *   The Date object is now intialized to:
 *       feet = 0;
-*       inches = 0.0;
+*       inches = 0;
 ***********************************************************/
 Distance::Distance()
 {
     feet = 0;
-    inches = 0.0;
+    inches = 0;
 }
-
-/***********************************************************
-*  Constructor (one argument) : Class Distance
-*_________________________________________________________
-*This constructor initializes corrects for negative inches, and corrects for
-*   overflow with init function.
-*_________________________________________________________
-* PRE-CONDITIONS
-*   The following need to have been declared:
-*       inches: inches representing total Distance
-* POST-CONDITIONS
-*   The Date object is now set and corrected through init().
-***********************************************************/
-Distance::Distance(double inches)
-{
-    this->inches = inches;
-    if(this->inches < 0) this->inches *= -1;
-    init();
-}
-
 /***********************************************************
 *  Constructor (two argument) : Class Distance
 *_________________________________________________________
-*This constructor initializes corrects for negative inches or feet, and
-* corrects for overflow with init function.
+*This constructor corrects for negative feet, and
+* corrects for overflow  and negatice inches with init function.
 *_________________________________________________________
 * PRE-CONDITIONS
 *   The following need to have been declared:
@@ -55,16 +38,148 @@ Distance::Distance(double inches)
 * POST-CONDITIONS
 *   The Date object is now set and corrected through init().
 ***********************************************************/
-Distance::Distance(unsigned ft, double inches)
+Distance::Distance(unsigned ft, double inch)
 {
+    if ( ft < 0 ) ft = -ft;
     feet = ft;
-    this->inches = inches;
-
-    if(feet < 0) feet *= -1;
-    if(this->inches < 0) this->inches *= -1;
-
+    inches = inch;
     init();
+}
 
+/***********************************************************
+*  Constructor (one argument) : Class Distance
+*_________________________________________________________
+*This constructor corrects for negative inches and corrects for
+*   overflow with init function.
+*_________________________________________________________
+* PRE-CONDITIONS
+*   The following need to have been declared:
+*       inch: inches representing total Distance
+* POST-CONDITIONS
+*   The Date object is now set and corrected through init().
+***********************************************************/
+Distance::Distance(double inch)
+{
+    feet = 0;
+    inches = inch;
+    init();
+}
+
+/***********************************************************
+* Method convertToInches: Class Distance
+*_________________________________________________________
+*This method will return a double represnting all the inches in
+*               in the Distance measurement in total.
+*  -returns double total
+*_________________________________________________________
+* PRE-CONDITIONS
+*   None
+* POST-CONDITIONS
+*       Returns total_inches in Distance (from inches and feet)
+***********************************************************/
+double Distance::convertToInches() const
+{
+    double total_inches;
+    total_inches = feet * 12 + inches;
+    return total_inches;
+}
+
+/***********************************************************
+* Method operator+: Class Distance
+*_________________________________________________________
+*This method will define the '+' operator for Distance objects.
+*  -returns Distance sum (result of addition)
+*_________________________________________________________
+* PRE-CONDITIONS
+*   The following need to have been declared:
+*       dist: other object for addition
+* POST-CONDITIONS
+*       returns Distance sum
+***********************************************************/
+const Distance Distance::operator+(const Distance &dist) const
+{
+    Distance sum;
+
+    sum.inches = inches + dist.inches;
+    sum.feet = feet + dist.feet;
+
+    sum.init();
+
+    return sum;
+}
+
+/***********************************************************
+* Method operator-: Class Distance
+*_________________________________________________________
+*This method will define the '-' operator for Distance objects.
+*  -returns Distance difference (result of subtraction)
+*_________________________________________________________
+* PRE-CONDITIONS
+*   The following need to have been declared:
+*       dist: other object for subtraction
+* POST-CONDITIONS
+*       returns Distance difference
+***********************************************************/
+const Distance Distance::operator-(const Distance &dist) const
+{
+    Distance difference;
+
+
+
+    if (feet > dist.feet)
+    {
+        difference.feet = feet - dist.feet;
+        if (inches >= dist.inches)
+            difference.inches = inches - dist.inches;
+        else if (inches < dist.inches)
+        {
+            difference.inches = 12 - (dist.inches - inches);
+            difference.feet -= 1;
+        }
+    }
+
+    else if (feet < dist.feet)
+    {
+        difference.feet = dist.feet - feet;
+        if (dist.inches >= inches)
+            difference.inches = dist.inches - inches;
+        else if (dist.inches < inches)
+        {
+            difference.inches = 12 - (inches - dist.inches);
+            difference.feet -= 1;
+        }
+    }
+
+
+    else if (feet == dist.feet)
+    {
+        difference.feet = feet - dist.feet;
+        if (dist.inches >= inches)
+            difference.inches = dist.inches - inches;
+        else if (dist.inches < inches)
+            difference.inches = inches - dist.inches;
+    }
+
+    difference.init();
+
+    return difference;
+}
+/***********************************************************
+* Method display: Class Distance
+*_________________________________________________________
+*This method will display the feet and inches of Distance in
+*               the appropriate format.
+*               Ex: 3' 0.00"
+*  -returns nothing
+*_________________________________________________________
+* PRE-CONDITIONS
+*   None
+* POST-CONDITIONS
+*       Displays the Distance
+***********************************************************/
+void Distance::display() const
+{
+    cout << feet << "' " << inches << "\"" ;
 }
 
 /***********************************************************
@@ -81,111 +196,16 @@ Distance::Distance(unsigned ft, double inches)
 ***********************************************************/
 void Distance::init()
 {
+    if (inches < 0)
+        inches = -inches;
 
-    if( inches >= 12 )
+    if (feet < 0)
+        feet = -feet;
+
+    if (inches >= 12)
     {
-        feet += inches/12;
-        inches -= (static_cast<int>(inches)/ 12) * 12;
+        feet += (inches/12);
+        inches = fmod(inches, 12);
+
     }
-}
-
-/***********************************************************
-* Method convertToInches: Class Distance
-*_________________________________________________________
-*This method will return a double represnting all the inches in
-*               in the Distance measurement in total.
-*  -returns double total
-*_________________________________________________________
-* PRE-CONDITIONS
-*   None
-* POST-CONDITIONS
-*       Returns total inches in Distance (from inches and feet)
-***********************************************************/
-double Distance::convertToInches() const
-{
-    double total;
-    total = feet*12;
-    total += inches;
-    return total;
-}
-
-/***********************************************************
-* Method display: Class Distance
-*_________________________________________________________
-*This method will display the feet and inches of Distance in
-*               the appropriate format.
-*               Ex: 3' 0.00"
-*  -returns nothing
-*_________________________________________________________
-* PRE-CONDITIONS
-*   None
-* POST-CONDITIONS
-*       Displays the Distance
-***********************************************************/
-void Distance::display() const
-{
-    cout << fixed << setprecision(2) <<  feet << "' " << inches <<"\"" << endl;
-}
-
-/***********************************************************
-* Method operator+: Class Distance
-*_________________________________________________________
-*This method will define the '+' operator for Distance objects.
-*  -returns Distance temp (result of addition)
-*_________________________________________________________
-* PRE-CONDITIONS
-*   The following need to have been declared:
-*       second: other object for addition
-* POST-CONDITIONS
-*       returns Distance temp
-***********************************************************/
-
-const Distance Distance::operator+(const Distance &second) const
-{
-    Distance temp;
-
-    temp.feet = feet + second.feet;
-    temp.inches = inches + second.inches;
-
-    temp.init();
-
-    return temp;
-}
-
-/***********************************************************
-* Method operator-: Class Distance
-*_________________________________________________________
-*This method will define the '-' operator for Distance objects.
-*  -returns Distance temp (result of subtraction)
-*_________________________________________________________
-* PRE-CONDITIONS
-*   The following need to have been declared:
-*       second: other object for subtraction
-* POST-CONDITIONS
-*       returns Distance temp
-***********************************************************/
-const Distance Distance::operator-(const Distance &second) const
-{
-    Distance temp;
-    int hold;
-    double hold2;
-
-    hold = feet -second.feet;
-    cout << endl << hold << endl;
-    hold2= inches - second.inches;
-
-    if (hold < 0 ) hold *= -1;
-    if (hold2 < 0 )
-    {
-        hold2 *= -1;
-        temp.feet -=1;
-    }
-
-    temp.feet = hold;
-    temp.inches = hold2;
-
-    temp.init();
-
-    return temp;
-
 }
