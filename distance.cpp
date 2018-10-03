@@ -47,7 +47,7 @@ const Distance Distance::operator-(const Distance &dist) const
 
 
 
-    if (feet >= dist.feet)
+    if (feet > dist.feet)
     {
         difference.feet = feet - dist.feet;
         if (inches >= dist.inches)
@@ -71,6 +71,15 @@ const Distance Distance::operator-(const Distance &dist) const
         }
     }
 
+
+    else if (feet == dist.feet)
+    {
+        difference.feet = feet - dist.feet;
+        if (dist.inches >= inches)
+            difference.inches = dist.inches - inches;
+        else if (dist.inches < inches)
+            difference.inches = inches - dist.inches;
+    }
 
     difference.init();
 
